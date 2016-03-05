@@ -2,14 +2,14 @@
     "default_currency": "USD",
     "ledger_path": "default.beancount",
     "temp_path": "beancount.temp",
-    "query_from_source": true,
+    "clear_tag": "clear",
     "title_format": "{date} * \"{payee}\" \"{comment}\" {tags}",
-    "body_format": "  {account:40} {flow:>13.2f} {currency}",
+    "body_format": "  {account:50} {flow:>13.2f} {currency}",
     "regexes": {
-        "open": "\\d{4}-\\d{2}-\\d{2} open ([\\w:-]+) ",
+        "open": "\\d{4}-\\d{2}-\\d{2} open ([\\w:-]+)",
         "close": "\\d{4}-\\d{2}-\\d{2} close ([\\w:-]+)",
         "payee": "\\d{4}-\\d{2}-\\d{2} \\* \"(.+?)\" \".*?\"",
-        "from": "\n;? *([\\w:-]+) +-\\d",
-        "to": "\n;? *([\\w:-]+) +\\d"
+        "from": "\n *([\\w:-]+) +-\\d",
+        "to": "\n *([\\w:-]+) +\\d"
     }
 }
