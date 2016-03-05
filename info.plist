@@ -19,6 +19,50 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>468964D0-FFD4-4011-BD37-4202570850C9</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>312E69AC-14DB-490A-8EF8-2394B2461708</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>9330B9FF-C00F-4D46-8E56-E974F88F15C3</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>D68F7816-06F0-4888-B230-1CDFCD8A6832</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>312E69AC-14DB-490A-8EF8-2394B2461708</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>468964D0-FFD4-4011-BD37-4202570850C9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 		<key>FCF05ACD-250C-4587-8B27-81077C2ECCE9</key>
 		<array>
 			<dict>
@@ -49,9 +93,16 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>echo "{query}" &gt;&gt; default.beancount</string>
+				<string>import json
+
+with open('beancount.json', 'r') as settingfile:
+    settings = json.loads(settingfile.read())
+
+with open(settings['ledger_path'], 'a') as beanfile:
+    beanfile.write('''\n{query}\n''')
+</string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>3</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
@@ -68,7 +119,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>bean</string>
+				<string>bean-add</string>
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -78,7 +129,7 @@
 				<key>queuemode</key>
 				<integer>1</integer>
 				<key>runningsubtext</key>
-				<string>Searching for Account...</string>
+				<string>Searching for Accounts...</string>
 				<key>script</key>
 				<string>python beancount.py add {query}</string>
 				<key>subtext</key>
@@ -103,22 +154,128 @@
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
-				<true/>
+				<false/>
 				<key>output</key>
 				<integer>0</integer>
 				<key>removeextension</key>
 				<false/>
 				<key>sticky</key>
 				<false/>
-				<key>text</key>
-				<string>{query}</string>
 				<key>title</key>
-				<string>New Entry Added</string>
+				<string>bean counted</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>312E69AC-14DB-490A-8EF8-2394B2461708</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>bean-cache</string>
+				<key>subtext</key>
+				<string>may provide custom beancount file</string>
+				<key>text</key>
+				<string>Refresh Caches</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>9330B9FF-C00F-4D46-8E56-E974F88F15C3</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python beancount.py cache {query}</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>import json
+
+pos = int({query})
+
+with open('beancount.json', 'r') as settingfile:
+    settings = json.loads(settingfile.read())
+
+with open(settings['ledger_path'], 'r') as beanfile:
+    bean = beanfile.read()
+
+with open(settings['ledger_path'], 'w') as beanfile:
+    beanfile.write(bean[:pos] + ' #' + settings['clear_tag'] + bean[pos:])
+</string>
+				<key>type</key>
+				<integer>3</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>468964D0-FFD4-4011-BD37-4202570850C9</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>bean-clear</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Searching for Entries...</string>
+				<key>script</key>
+				<string>python beancount.py clear {query}</string>
+				<key>subtext</key>
+				<string>by adding tag #clear</string>
+				<key>title</key>
+				<string>Clear Transaction</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -136,6 +293,26 @@
 		<dict>
 			<key>ypos</key>
 			<real>10</real>
+		</dict>
+		<key>468964D0-FFD4-4011-BD37-4202570850C9</key>
+		<dict>
+			<key>ypos</key>
+			<real>250</real>
+		</dict>
+		<key>9330B9FF-C00F-4D46-8E56-E974F88F15C3</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+		<key>D68F7816-06F0-4888-B230-1CDFCD8A6832</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+		<key>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</key>
+		<dict>
+			<key>ypos</key>
+			<real>250</real>
 		</dict>
 		<key>FCF05ACD-250C-4587-8B27-81077C2ECCE9</key>
 		<dict>
