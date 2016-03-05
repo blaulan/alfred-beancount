@@ -2,7 +2,7 @@ Alfred workflow to append or modify beancount file with account/payee auto-compl
 
 ## Append a new entry to existing beancount file
 
-> bean-add FROM_ACCOUNT TO_ACCOUNT "[PAYEE]" AMOUNT
+> bean-add FROM_ACCOUNT TO_ACCOUNT '[PAYEE]' AMOUNT '[TAGS]' '[COMMENT]'
 
 ## Rebuild account and payee caches
 
@@ -10,4 +10,4 @@ Alfred workflow to append or modify beancount file with account/payee auto-compl
 
 ## Clear an transaction by adding #clear tag
 
-> bean-clear
+> bean-clear [FROM_ACCOUNT]
