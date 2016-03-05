@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-02 18:25:57
+# @Last Modified time: 2016-03-04 19:20:53
 
 import re
 import sys
@@ -49,8 +49,8 @@ class beancount:
         else:
             values['date'] = datetime.now().strftime('%Y-%m-%d')
             values['amount'] = float(self.args[3])
-            values['comment'] = self.args[4]
-            values['tags'] = self.args[5]
+            values['tags'] = self.args[4]
+            values['comment'] = self.args[5]
             entry = [self.settings['title_format'].format(**values).strip()]
             entry.append(self.settings['body_format'].format(
                 account=values['from'], flow=-values['amount'],
@@ -102,29 +102,59 @@ class beancount:
 
         return accounts
 
-    def bean_clear(self):
-        pass
+    def bean_clear(self, inputs=None):
+        with open(self.settings['ledger_path'], 'r') as beanfile:
+            bean = beanfile.read()
+
+        for m in re.compile('(\d{4}-\d{2}-\d{2}) \* ?(.*)').finditer(bean):
+            if '#'+self.settings['clear_tag'] in m.group():
+                continue
+
+            tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
+            values = {
+                'from': bean[m.end()+3:m.end()+53].strip(),
+                'to': bean[m.end()+73:m.end()+123].strip(),
+                'amount': abs(float(bean[m.end()+53:m.end()+67].strip())),
+                'comment': (tail+['NULL'])[0].upper()
+            }
+
+            if inputs and not self.wf.filter(inputs, [values['from']]):
+                continue
+
+            self.wf.add_item(
+                title='${amount:.2f} with {comment}'.format(**values),
+                subtitle=u'{from} ➟ {to}'.format(**values),
+                valid=True,
+                arg=str(m.end())
+            )
 
     def rank(self, inputs, searches):
+        if not inputs:
+            return [(inputs, 0)]
+
         results = self.wf.filter(inputs, searches.keys(), include_score=True)
-        results = [(v, s*log(searches[v]+1))
-                   for v, s, _ in results]+[(inputs, 0)]
-        return sorted(results, key=lambda x: -x[1])
+        results = [(v, s*log(searches[v]+1)) for v, s, _ in results]
+        if results:
+            return sorted(results, key=lambda x: -x[1])
+        else:
+            return [(inputs, 0)]
 
 
 def main(wf):
     bean = beancount(wf)
+
     action = wf.args[0]
+    if len(wf.args) >= 2:
+        inputs = wf.args[1]
+    else:
+        inputs = None
+
     if action == 'add':
         bean.bean_add()
     elif action == 'cache':
-        if len(wf.args) >= 2:
-            ledger_path = wf.args[1]
-        else:
-            ledger_path = None
-        bean.bean_cache(ledger_path)
+        bean.bean_cache(inputs)
     elif action == 'clear':
-        bean.bean_clear()
+        bean.bean_clear(inputs)
 
     wf.send_feedback()
 
