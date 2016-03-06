@@ -1,6 +1,6 @@
 Alfred workflow to append or modify beancount file with account/payee auto-complete. Remember to modify the corresponding regex in `beancount.json` to match your entry format.
 
-Thanks to [Alfred-Workflow](http://www.deanishe.net/alfred-workflow/) and [beancount: Double-Entry Accounting from Text Files](http://furius.ca/beancount/).
+Thanks to [beancount](http://furius.ca/beancount/), [Alfred-Workflow](http://www.deanishe.net/alfred-workflow/) and [iconmonstr](http://iconmonstr.com/)
 
 ### Append a new entry to existing beancount file
 

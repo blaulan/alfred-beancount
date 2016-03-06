@@ -3,8 +3,9 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-04 19:20:53
+# @Last Modified time: 2016-03-06 13:33:50
 
+import os
 import re
 import sys
 import json
@@ -28,6 +29,19 @@ class beancount:
         with open(settingpath, 'r') as settingfile:
             self.settings = json.loads(settingfile.read())
 
+        default_icons = {
+            'Assets': '{workflowdir}/icons/Assets.png',
+            'Liabilities': '{workflowdir}/icons/Liabilities.png',
+            'Equity': '{workflowdir}/icons/Equity.png',
+            'Income': '{workflowdir}/icons/Income.png',
+            'Expenses': '{workflowdir}/icons/Expenses.png'
+        }
+
+        for k, v in self.settings['icons'].items():
+            if not os.path.isfile(v.format(workflowdir=self.wf.workflowdir)):
+                self.settings['icons'][k] = default_icons[k]
+            self.settings['icons'][k] = v.format(workflowdir=self.wf.workflowdir)
+
     def bean_add(self):
         try:
             with open(self.settings['temp_path'], 'r') as tempfile:
@@ -45,7 +59,16 @@ class beancount:
         if self.length <= 3:
             for v, _ in self.rank(self.args[self.length-1], accounts[params[-1]]):
                 values[params[-1]] = v
-                self.wf.add_item(v, subtitle.format(**values), valid=False)
+                if params[-1] in ['from', 'to']:
+                    icon = self.settings['icons'][v.split(':')[0]]
+                else:
+                    icon = self.wf.workflowdir + '/icon.png'
+                self.wf.add_item(
+                    title=v,
+                    subtitle=subtitle.format(**values),
+                    icon=icon,
+                    valid=False
+                )
         else:
             values['date'] = datetime.now().strftime('%Y-%m-%d')
             values['amount'] = float(self.args[3])

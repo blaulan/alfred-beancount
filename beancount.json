@@ -11,5 +11,12 @@
         "payee": "\\d{4}-\\d{2}-\\d{2} \\* \"(.+?)\" \".*?\"",
         "from": "\n *([\\w:-]+) +-\\d",
         "to": "\n *([\\w:-]+) +\\d"
+    },
+    "icons": {
+        "Assets": "{workflowdir}/icons/Assets.png",
+        "Liabilities": "{workflowdir}/icons/Liabilities.png",
+        "Equity": "{workflowdir}/icons/Equity.png",
+        "Income": "{workflowdir}/icons/Income.png",
+        "Expenses": "{workflowdir}/icons/Expenses.png"
     }
 }
