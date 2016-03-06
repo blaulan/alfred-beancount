@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-06 13:47:14
+# @Last Modified time: 2016-03-06 14:28:52
 
 import os
 import re
@@ -57,9 +57,11 @@ class beancount:
             values[p] = self.rank(self.args[index], accounts[p])[0][0]
 
         if self.length <= 3:
-            for v, _ in self.rank(self.args[self.length-1], accounts[params[-1]]):
+            for v, s in self.rank(self.args[self.length-1], accounts[params[-1]]):
                 values[params[-1]] = v
                 if params[-1] in ['from', 'to']:
+                    if not s:
+                        continue
                     icon = self.settings['icons'][v.split(':')[0]]
                 else:
                     icon = self.wf.workflowdir + '/icon.png'
@@ -129,15 +131,16 @@ class beancount:
         with open(self.settings['ledger_path'], 'r') as beanfile:
             bean = beanfile.read()
 
-        for m in re.compile('(\d{4}-\d{2}-\d{2}) \* ?(.*)').finditer(bean):
+        par = re.compile('(\d{4}-\d{2}-\d{2}) \* ?(.*)\n(.+)\n(.+)')
+        for m in par.finditer(bean):
             if '#'+self.settings['clear_tag'] in m.group():
                 continue
 
             tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
             values = {
-                'from': bean[m.end()+3:m.end()+53].strip(),
-                'to': bean[m.end()+73:m.end()+123].strip(),
-                'amount': abs(float(bean[m.end()+53:m.end()+67].strip())),
+                'from': m.group(3).split()[0],
+                'to': m.group(4).split()[0],
+                'amount': abs(float(m.group(3).split()[1])),
                 'comment': (tail+['NULL'])[0].upper()
             }
 
