@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-06 13:33:50
+# @Last Modified time: 2016-03-06 13:47:14
 
 import os
 import re
@@ -184,13 +184,12 @@ def main(wf):
 
 if __name__ == '__main__':
     from workflow import Workflow
-
-    update_settings = {
-        'github_slug': 'username/reponame',
-        'version': '0.0.1',
-        'frequency': 7
-    }
-
-    wf = Workflow()
+    wf = Workflow(
+        update_settings = {
+            'github_slug': 'blaulan/alfred-beancount',
+            'version': '0.1',
+            'frequency': 7
+        }
+    )
     wf.magic_prefix = 'wf:'
     sys.exit(wf.run(main))
