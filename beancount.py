@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-06 14:28:52
+# @Last Modified time: 2016-03-06 15:24:53
 
 import os
 import re
@@ -15,7 +15,7 @@ from datetime import datetime
 
 class beancount:
 
-    '''APPEND OR MODIFY BEANCOUNT ENTRY WITH ALFRED:
+    '''APPEND OR MODIFY BEANCOUNT ENTRY VIA ALFRED:
 
     bean_add: add new entry to beancount file;
     bean_clear: clear an entry in beancount file by adding #clear tag;
@@ -138,6 +138,7 @@ class beancount:
 
             tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
             values = {
+                'date': m.group(1),
                 'from': m.group(3).split()[0],
                 'to': m.group(4).split()[0],
                 'amount': abs(float(m.group(3).split()[1])),
@@ -149,7 +150,7 @@ class beancount:
 
             self.wf.add_item(
                 title='${amount:.2f} with {comment}'.format(**values),
-                subtitle=u'{from} ➟ {to}'.format(**values),
+                subtitle=u'{date} {from} ➟ {to}'.format(**values),
                 valid=True,
                 arg=str(m.end())
             )
