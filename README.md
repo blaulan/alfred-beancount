@@ -4,7 +4,7 @@ Alfred workflow to modify beancount file with account/payee auto-complete. Thank
 
 > bean-add FROM_ACCOUNT TO_ACCOUNT '[PAYEE]' AMOUNT '[TAGS]' '[COMMENT]'
 
-![bean-add](alfred-beancount/blob/master/screenshots/bean-add.png?raw=true)
+![bean-add](/screenshots/bean-add.png?raw=true)
 
 ### Rebuild account and payee caches
 
@@ -14,4 +14,4 @@ Alfred workflow to modify beancount file with account/payee auto-complete. Thank
 
 > bean-clear [FROM_ACCOUNT]
 
-![bean-clear](alfred-beancount/blob/master/screenshots/bean-clear.png?raw=true)
+![bean-clear](/screenshots/bean-clear.png?raw=true)
