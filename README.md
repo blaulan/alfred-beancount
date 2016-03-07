@@ -2,7 +2,7 @@ Alfred workflow to modify beancount file with account/payee auto-complete. Thank
 
 ### Instruction for 1st Run
 
-You will need to change `ledger_path` in `beancount.json` from the workflow directory. The regexes will catch histrorical transactions correctly most time. However, if anything went wrong, modify them to match your file may solve the problem. Output of `bean-add` function is defined by `title_format` and `body_format`, if you want different format, that's where you should refer to. 
+Download the workflow from [latest release](https://github.com/blaulan/alfred-beancount/releases/latest). You will need to change `ledger_path` in `beancount.json` from the workflow directory. The regexes will catch histrorical transactions correctly most time. However, if anything went wrong, modify them to match your file may solve the problem. Output of `bean-add` function is defined by `title_format` and `body_format`, if you want different format, that's where you should refer to. 
 
 ### Append a new entry to existing beancount file
 
