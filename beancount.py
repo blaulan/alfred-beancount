@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-06 22:16:39
+# @Last Modified time: 2016-03-06 23:26:41
 
 import os
 import re
@@ -181,14 +181,21 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    from workflow import Workflow
+    from workflow import Workflow, ICON_INFO
     wf = Workflow(
         update_settings = {
             'github_slug': 'blaulan/alfred-beancount',
-            'version': '0.1',
+            'version': 'v0.2',
         }
     )
+    wf.magic_prefix = 'wf:'
+
     if wf.update_available:
-        wf.start_update()
+        wf.add_item(
+            'New version available',
+            'Action this item to install the update',
+            autocomplete='wf:update',
+            icon=ICON_INFO
+        )
 
     sys.exit(wf.run(main))
