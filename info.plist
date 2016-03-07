@@ -174,25 +174,6 @@ with open(settings['ledger_path'], 'a') as beanfile:
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>python beancount.py cache {query}</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>keyword</key>
@@ -208,6 +189,25 @@ with open(settings['ledger_path'], 'a') as beanfile:
 			<string>alfred.workflow.input.keyword</string>
 			<key>uid</key>
 			<string>9330B9FF-C00F-4D46-8E56-E974F88F15C3</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python beancount.py cache {query}</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>

@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-06 15:24:53
+# @Last Modified time: 2016-03-06 22:16:39
 
 import os
 import re
@@ -29,18 +29,11 @@ class beancount:
         with open(settingpath, 'r') as settingfile:
             self.settings = json.loads(settingfile.read())
 
-        default_icons = {
-            'Assets': '{workflowdir}/icons/Assets.png',
-            'Liabilities': '{workflowdir}/icons/Liabilities.png',
-            'Equity': '{workflowdir}/icons/Equity.png',
-            'Income': '{workflowdir}/icons/Income.png',
-            'Expenses': '{workflowdir}/icons/Expenses.png'
-        }
-
         for k, v in self.settings['icons'].items():
-            if not os.path.isfile(v.format(workflowdir=self.wf.workflowdir)):
-                self.settings['icons'][k] = default_icons[k]
-            self.settings['icons'][k] = v.format(workflowdir=self.wf.workflowdir)
+            wfdir = self.wf.workflowdir
+            if not os.path.isfile(v.format(workflowdir=wfdir)):
+                self.settings['icons'][k] = '{workflowdir}/icons/{cat}.png'
+            self.settings['icons'][k] = v.format(workflowdir=wfdir, cat=k)
 
     def bean_add(self):
         try:
@@ -151,6 +144,7 @@ class beancount:
             self.wf.add_item(
                 title='${amount:.2f} with {comment}'.format(**values),
                 subtitle=u'{date} {from} ➟ {to}'.format(**values),
+                icon=self.settings['icons'][values['from'].split(':')[0]],
                 valid=True,
                 arg=str(m.end())
             )
@@ -192,8 +186,9 @@ if __name__ == '__main__':
         update_settings = {
             'github_slug': 'blaulan/alfred-beancount',
             'version': '0.1',
-            'frequency': 7
         }
     )
-    wf.magic_prefix = 'wf:'
+    if wf.update_available:
+        wf.start_update()
+
     sys.exit(wf.run(main))
