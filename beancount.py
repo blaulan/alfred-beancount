@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-06 23:26:41
+# @Last Modified time: 2016-03-07 18:37:58
 
 import os
 import re
@@ -146,7 +146,7 @@ class beancount:
                 subtitle=u'{date} {from} ➟ {to}'.format(**values),
                 icon=self.settings['icons'][values['from'].split(':')[0]],
                 valid=True,
-                arg=str(m.end())
+                arg=str(m.end()-len(m.group(3))-len(m.group(4))-2)
             )
 
     def rank(self, inputs, searches):
