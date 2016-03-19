@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-07 18:37:58
+# @Last Modified time: 2016-03-13 10:14:32
 
 import os
 import re
@@ -67,6 +67,8 @@ class beancount:
         else:
             values['date'] = datetime.now().strftime('%Y-%m-%d')
             values['amount'] = float(self.args[3])
+            if self.args[4]:
+                self.args[4] = '#'+self.args[4].replace('+', ' #')
             values['tags'] = self.args[4]
             values['comment'] = self.args[5]
             entry = [self.settings['title_format'].format(**values).strip()]
