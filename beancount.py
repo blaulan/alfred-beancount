@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-03-13 10:14:32
+# @Last Modified time: 2016-08-12 17:23:36
 
 import os
 import re
@@ -13,7 +13,7 @@ from math import log
 from datetime import datetime
 
 
-class beancount:
+class Beancount:
 
     '''APPEND OR MODIFY BEANCOUNT ENTRY VIA ALFRED:
 
@@ -53,7 +53,7 @@ class beancount:
             for v, s in self.rank(self.args[self.length-1], accounts[params[-1]]):
                 values[params[-1]] = v
                 if params[-1] in ['from', 'to']:
-                    if not s:
+                    if v==self.args[self.length-1]:
                         continue
                     icon = self.settings['icons'][v.split(':')[0]]
                 else:
@@ -126,7 +126,7 @@ class beancount:
         with open(self.settings['ledger_path'], 'r') as beanfile:
             bean = beanfile.read()
 
-        par = re.compile('(\d{4}-\d{2}-\d{2}) \* ?(.*)\n(.+)\n(.+)')
+        par = re.compile('[^;](\d{4}-\d{2}-\d{2}) \* ?(.*)\n(.+)\n(.+)')
         for m in par.finditer(bean):
             if '#'+self.settings['clear_tag'] in m.group():
                 continue
@@ -136,7 +136,7 @@ class beancount:
                 'date': m.group(1),
                 'from': m.group(3).split()[0],
                 'to': m.group(4).split()[0],
-                'amount': abs(float(m.group(3).split()[1])),
+                'amount': abs(float(m.group(3).split()[-2])),
                 'comment': (tail+['NULL'])[0].upper()
             }
 
@@ -164,7 +164,7 @@ class beancount:
 
 
 def main(wf):
-    bean = beancount(wf)
+    bean = Beancount(wf)
 
     action = wf.args[0]
     if len(wf.args) >= 2:

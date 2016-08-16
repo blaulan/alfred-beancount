@@ -17,6 +17,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>468964D0-FFD4-4011-BD37-4202570850C9</key>
@@ -28,6 +30,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>9330B9FF-C00F-4D46-8E56-E974F88F15C3</key>
@@ -39,6 +43,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>D68F7816-06F0-4888-B230-1CDFCD8A6832</key>
@@ -50,6 +56,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</key>
@@ -61,6 +69,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 		<key>FCF05ACD-250C-4587-8B27-81077C2ECCE9</key>
@@ -72,6 +82,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 	</dict>
@@ -101,6 +113,10 @@ with open('beancount.json', 'r') as settingfile:
 with open(settings['ledger_path'], 'a') as beanfile:
     beanfile.write('''\n{query}\n''')
 </string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>type</key>
 				<integer>3</integer>
 			</dict>
@@ -109,11 +125,13 @@ with open(settings['ledger_path'], 'a') as beanfile:
 			<key>uid</key>
 			<string>FCF05ACD-250C-4587-8B27-81077C2ECCE9</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>escaping</key>
@@ -132,6 +150,10 @@ with open(settings['ledger_path'], 'a') as beanfile:
 				<string>Searching for Accounts...</string>
 				<key>script</key>
 				<string>python beancount.py add {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>subtext</key>
 				<string>to default.beancount</string>
 				<key>title</key>
@@ -146,7 +168,7 @@ with open(settings['ledger_path'], 'a') as beanfile:
 			<key>uid</key>
 			<string>2D587929-4184-4AEB-85C0-D630F382FA5A</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -154,13 +176,11 @@ with open(settings['ledger_path'], 'a') as beanfile:
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>output</key>
-				<integer>0</integer>
+				<true/>
 				<key>removeextension</key>
 				<false/>
-				<key>sticky</key>
-				<false/>
+				<key>text</key>
+				<string></string>
 				<key>title</key>
 				<string>bean counted</string>
 			</dict>
@@ -169,7 +189,30 @@ with open(settings['ledger_path'], 'a') as beanfile:
 			<key>uid</key>
 			<string>312E69AC-14DB-490A-8EF8-2394B2461708</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python beancount.py cache {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -190,26 +233,7 @@ with open(settings['ledger_path'], 'a') as beanfile:
 			<key>uid</key>
 			<string>9330B9FF-C00F-4D46-8E56-E974F88F15C3</string>
 			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>python beancount.py cache {query}</string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
-			<key>version</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -232,6 +256,10 @@ with open(settings['ledger_path'], 'r') as beanfile:
 with open(settings['ledger_path'], 'w') as beanfile:
     beanfile.write(bean[:pos] + ' #' + settings['clear_tag'] + bean[pos:])
 </string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>type</key>
 				<integer>3</integer>
 			</dict>
@@ -240,11 +268,13 @@ with open(settings['ledger_path'], 'w') as beanfile:
 			<key>uid</key>
 			<string>468964D0-FFD4-4011-BD37-4202570850C9</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -263,6 +293,10 @@ with open(settings['ledger_path'], 'w') as beanfile:
 				<string>Searching for Entries...</string>
 				<key>script</key>
 				<string>python beancount.py clear {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>subtext</key>
 				<string>by adding tag #clear</string>
 				<key>title</key>
@@ -277,7 +311,7 @@ with open(settings['ledger_path'], 'w') as beanfile:
 			<key>uid</key>
 			<string>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -286,36 +320,50 @@ with open(settings['ledger_path'], 'w') as beanfile:
 	<dict>
 		<key>2D587929-4184-4AEB-85C0-D630F382FA5A</key>
 		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
 			<key>ypos</key>
 			<real>10</real>
 		</dict>
 		<key>312E69AC-14DB-490A-8EF8-2394B2461708</key>
 		<dict>
+			<key>xpos</key>
+			<integer>700</integer>
 			<key>ypos</key>
 			<real>10</real>
 		</dict>
 		<key>468964D0-FFD4-4011-BD37-4202570850C9</key>
 		<dict>
+			<key>xpos</key>
+			<integer>500</integer>
 			<key>ypos</key>
 			<real>250</real>
 		</dict>
 		<key>9330B9FF-C00F-4D46-8E56-E974F88F15C3</key>
 		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
 			<key>ypos</key>
 			<real>130</real>
 		</dict>
 		<key>D68F7816-06F0-4888-B230-1CDFCD8A6832</key>
 		<dict>
+			<key>xpos</key>
+			<integer>500</integer>
 			<key>ypos</key>
 			<real>130</real>
 		</dict>
 		<key>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</key>
 		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
 			<key>ypos</key>
 			<real>250</real>
 		</dict>
 		<key>FCF05ACD-250C-4587-8B27-81077C2ECCE9</key>
 		<dict>
+			<key>xpos</key>
+			<integer>500</integer>
 			<key>ypos</key>
 			<real>10</real>
 		</dict>
