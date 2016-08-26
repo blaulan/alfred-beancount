@@ -3,13 +3,14 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-08-12 17:23:36
+# @Last Modified time: 2016-08-25 20:36:28
 
 import os
 import re
 import sys
 import json
 from math import log
+from glob import glob
 from datetime import datetime
 
 
@@ -89,11 +90,15 @@ class Beancount:
                 copytext=entry
             )
 
-    def bean_cache(self, ledger_path=None):
-        if not ledger_path:
-            ledger_path = self.settings['ledger_path']
-        with open(ledger_path, 'r') as beanfile:
-            bean = beanfile.read()
+    def bean_cache(self, ledger_folder=None):
+        if not ledger_folder:
+            ledger_folder = self.settings['ledger_folder']
+
+        beans = []
+        for f in glob(ledger_folder+'/*.beancount'):
+            with open(f, 'r') as beanfile:
+                beans.append(beanfile.read())
+        bean = '\n'.join(beans)
 
         matches = {}
         for key, reg in self.settings['regexes'].items():
@@ -123,7 +128,7 @@ class Beancount:
         return accounts
 
     def bean_clear(self, inputs=None):
-        with open(self.settings['ledger_path'], 'r') as beanfile:
+        with open(self.settings['default_ledger'], 'r') as beanfile:
             bean = beanfile.read()
 
         par = re.compile('[^;](\d{4}-\d{2}-\d{2}) \* ?(.*)\n(.+)\n(.+)')
