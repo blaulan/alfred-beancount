@@ -193,6 +193,29 @@ with open(settings['default_ledger'], 'a') as beanfile:
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python beancount.py cache {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>keyword</key>
@@ -219,29 +242,6 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>python beancount.py cache {query}</string>
-				<key>scriptargtype</key>
-				<integer>0</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
 				<string>import json
 
 pos = int({query})
@@ -253,7 +253,7 @@ with open(settings['default_ledger'], 'r') as beanfile:
     bean = beanfile.read()
 
 with open(settings['default_ledger'], 'w') as beanfile:
-    beanfile.write(bean[:pos] + ' #' + settings['clear_tag'] + bean[pos:])</string>
+    beanfile.write(bean[:pos+12] + '*' + bean[pos+13:])</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>

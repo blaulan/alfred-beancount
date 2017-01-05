@@ -3,7 +3,7 @@
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
 # @Last Modified by:   Yue Wu
-# @Last Modified time: 2016-08-25 20:36:28
+# @Last Modified time: 2017-01-05 12:40:38
 
 import os
 import re
@@ -131,11 +131,8 @@ class Beancount:
         with open(self.settings['default_ledger'], 'r') as beanfile:
             bean = beanfile.read()
 
-        par = re.compile('[^;](\d{4}-\d{2}-\d{2}) \* ?(.*)\n(.+)\n(.+)')
+        par = re.compile('[^;](\d{4}-\d{2}-\d{2}) ! ?(.*)\n(.+)\n(.+)')
         for m in par.finditer(bean):
-            if '#'+self.settings['clear_tag'] in m.group():
-                continue
-
             tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
             values = {
                 'date': m.group(1),
@@ -153,7 +150,7 @@ class Beancount:
                 subtitle=u'{date} {from} ➟ {to}'.format(**values),
                 icon=self.settings['icons'][values['from'].split(':')[0]],
                 valid=True,
-                arg=str(m.end()-len(m.group(3))-len(m.group(4))-2)
+                arg=str(m.start())
             )
 
     def rank(self, inputs, searches):
