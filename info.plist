@@ -249,12 +249,11 @@ pos = int({query})
 with open('beancount.json', 'r') as settingfile:
     settings = json.loads(settingfile.read())
 
-with open(settings['ledger_path'], 'r') as beanfile:
+with open(settings['default_ledger'], 'r') as beanfile:
     bean = beanfile.read()
 
-with open(settings['ledger_path'], 'w') as beanfile:
-    beanfile.write(bean[:pos] + ' #' + settings['clear_tag'] + bean[pos:])
-</string>
+with open(settings['default_ledger'], 'w') as beanfile:
+    beanfile.write(bean[:pos] + ' #' + settings['clear_tag'] + bean[pos:])</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
