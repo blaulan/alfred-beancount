@@ -12,6 +12,7 @@ import json
 from math import log
 from glob import glob
 from datetime import datetime
+from pypinyin import lazy_pinyin
 
 
 class Beancount:
@@ -51,21 +52,24 @@ class Beancount:
             values[p] = self.rank(self.args[index], accounts[p])[0][0]
 
         if self.length <= 3:
-            for v, s in self.rank(self.args[self.length-1], accounts[params[-1]]):
-                values[params[-1]] = v
+            for v,_ in self.rank(self.args[self.length-1], accounts[params[-1]]):
                 if params[-1] in ['from', 'to']:
                     if v==self.args[self.length-1]:
                         continue
+                    value = v
                     icon = self.settings['icons'][v.split(':')[0]]
                 else:
+                    value = accounts['mapping'][v]
                     icon = self.wf.workflowdir + '/icon.png'
+                values[params[-1]] = value
                 self.wf.add_item(
-                    title=v,
+                    title=value,
                     subtitle=subtitle.format(**values),
                     icon=icon,
                     valid=False
                 )
         else:
+            values['payee'] = accounts['mapping'][values['payee']]
             values['date'] = datetime.now().strftime('%Y-%m-%d')
             values['amount'] = float(self.args[3])
             if self.args[4]:
@@ -83,7 +87,7 @@ class Beancount:
             ))
             entry = '\n'.join(entry)
             self.wf.add_item(
-                title='New ${amount:.2f} Entry'.format(**values),
+                title='New ${amount:.2f} Entry {tags}'.format(**values),
                 subtitle=subtitle.format(**values),
                 valid=True,
                 arg=entry,
@@ -117,7 +121,11 @@ class Beancount:
                 if x not in matches['close']
             },
             'payee': {
-                x: matches['payee'].count(x)
+                self.decode(x): matches['payee'].count(x)
+                for x in set(matches['payee'])
+            },
+            'mapping': {
+                self.decode(x): x
                 for x in set(matches['payee'])
             }
         }
@@ -131,7 +139,7 @@ class Beancount:
         with open(self.settings['default_ledger'], 'r') as beanfile:
             bean = beanfile.read()
 
-        par = re.compile('[^;](\d{4}-\d{2}-\d{2}) ! ?(.*)\n(.+)\n(.+)')
+        par = re.compile(r'[^;](\d{4}-\d{2}-\d{2}) ! ?(.*)\n(.+)\n(.+)')
         for m in par.finditer(bean):
             tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
             values = {
@@ -164,6 +172,9 @@ class Beancount:
         else:
             return [(inputs, 0)]
 
+    def decode(self, text):
+        return ''.join(lazy_pinyin(text.decode('utf-8')))
+
 
 def main(wf):
     bean = Beancount(wf)
@@ -189,7 +200,7 @@ if __name__ == '__main__':
     wf = Workflow(
         update_settings = {
             'github_slug': 'blaulan/alfred-beancount',
-            'version': 'v0.2',
+            'version': 'v0.3',
         }
     )
     wf.magic_prefix = 'wf:'

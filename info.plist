@@ -131,6 +131,12 @@ with open(settings['default_ledger'], 'a') as beanfile:
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>escaping</key>
@@ -167,7 +173,7 @@ with open(settings['default_ledger'], 'a') as beanfile:
 			<key>uid</key>
 			<string>2D587929-4184-4AEB-85C0-D630F382FA5A</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -193,6 +199,27 @@ with open(settings['default_ledger'], 'a') as beanfile:
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>bean-cache</string>
+				<key>subtext</key>
+				<string>may provide custom beancount file</string>
+				<key>text</key>
+				<string>Refresh Caches</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>9330B9FF-C00F-4D46-8E56-E974F88F15C3</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -212,27 +239,6 @@ with open(settings['default_ledger'], 'a') as beanfile:
 			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>keyword</key>
-				<string>bean-cache</string>
-				<key>subtext</key>
-				<string>may provide custom beancount file</string>
-				<key>text</key>
-				<string>Refresh Caches</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>9330B9FF-C00F-4D46-8E56-E974F88F15C3</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -273,6 +279,12 @@ with open(settings['default_ledger'], 'w') as beanfile:
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -309,7 +321,7 @@ with open(settings['default_ledger'], 'w') as beanfile:
 			<key>uid</key>
 			<string>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -319,51 +331,51 @@ with open(settings['default_ledger'], 'w') as beanfile:
 		<key>2D587929-4184-4AEB-85C0-D630F382FA5A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<integer>180</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>80</integer>
 		</dict>
 		<key>312E69AC-14DB-490A-8EF8-2394B2461708</key>
 		<dict>
 			<key>xpos</key>
-			<integer>700</integer>
+			<integer>580</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>80</integer>
 		</dict>
 		<key>468964D0-FFD4-4011-BD37-4202570850C9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<integer>380</integer>
 			<key>ypos</key>
-			<real>250</real>
+			<integer>320</integer>
 		</dict>
 		<key>9330B9FF-C00F-4D46-8E56-E974F88F15C3</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<integer>180</integer>
 			<key>ypos</key>
-			<real>130</real>
+			<integer>200</integer>
 		</dict>
 		<key>D68F7816-06F0-4888-B230-1CDFCD8A6832</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<integer>380</integer>
 			<key>ypos</key>
-			<real>130</real>
+			<integer>200</integer>
 		</dict>
 		<key>FA3F5F56-A621-47C7-8CD3-4971A06E0B62</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<integer>180</integer>
 			<key>ypos</key>
-			<real>250</real>
+			<integer>320</integer>
 		</dict>
 		<key>FCF05ACD-250C-4587-8B27-81077C2ECCE9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<integer>380</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>80</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>
