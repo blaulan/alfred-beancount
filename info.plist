@@ -90,7 +90,7 @@
 	<key>createdby</key>
 	<string>Yue Wu</string>
 	<key>description</key>
-	<string>add a new entry to beancount</string>
+	<string>insert new entries to beancount</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -111,7 +111,7 @@ with open('beancount.json', 'r') as settingfile:
     settings = json.loads(settingfile.read())
 
 with open(settings['default_ledger'], 'a') as beanfile:
-    beanfile.write('''\n{query}\n''')</string>
+    beanfile.write('''{query}\n\n''')</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -148,13 +148,13 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>queuedelayimmediatelyinitially</key>
 				<true/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Searching for Accounts...</string>
 				<key>script</key>
-				<string>python beancount.py add {query}</string>
+				<string>$python_path beancount.py add {query}</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -187,7 +187,7 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>text</key>
 				<string></string>
 				<key>title</key>
-				<string>bean counted</string>
+				<string>beancounted</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
@@ -225,7 +225,7 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>python beancount.py cache {query}</string>
+				<string>$python_path beancount.py cache {query}</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -302,7 +302,7 @@ with open(settings['default_ledger'], 'w') as beanfile:
 				<key>runningsubtext</key>
 				<string>Searching for Entries...</string>
 				<key>script</key>
-				<string>python beancount.py clear {query}</string>
+				<string>$python_path beancount.py clear {query}</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -325,7 +325,7 @@ with open(settings['default_ledger'], 'w') as beanfile:
 		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string>Alfred workflow to modify beancount file with account/payee auto-complete. Thanks to [beancount](http://furius.ca/beancount/), [Alfred-Workflow](http://www.deanishe.net/alfred-workflow/) and [iconmonstr](http://iconmonstr.com/). Please remember to modify the corresponding regex in `beancount.json` to match your entry format.</string>
 	<key>uidata</key>
 	<dict>
 		<key>2D587929-4184-4AEB-85C0-D630F382FA5A</key>
@@ -378,6 +378,26 @@ with open(settings['default_ledger'], 'w') as beanfile:
 			<integer>80</integer>
 		</dict>
 	</dict>
+	<key>variables</key>
+	<dict>
+		<key>default_currency</key>
+		<string>CNY</string>
+		<key>default_ledger</key>
+		<string>./example.beancount</string>
+		<key>ledger_folder</key>
+		<string>.</string>
+		<key>python_path</key>
+		<string>/Users/yue/.virtualenvs/py27/bin/python2</string>
+	</dict>
+	<key>variablesdontexport</key>
+	<array>
+		<string>python_path</string>
+		<string>ledger_folder</string>
+		<string>default_ledger</string>
+		<string>default_currency</string>
+	</array>
+	<key>version</key>
+	<string>0.3.1</string>
 	<key>webaddress</key>
 	<string>http://blog.blaulan.com</string>
 </dict>

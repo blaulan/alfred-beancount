@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Author: Yue Wu
 # @Date:   2016-02-29 23:43:43
@@ -17,12 +16,13 @@ from pypinyin import lazy_pinyin
 
 class Beancount:
 
-    '''APPEND OR MODIFY BEANCOUNT ENTRY VIA ALFRED:
+    """
+    APPEND OR MODIFY BEANCOUNT ENTRY VIA ALFRED:
 
     bean_add: add new entry to beancount file;
     bean_clear: clear an entry in beancount file by adding #clear tag;
     bean_cache: create a cache file with all accounts and payees with frequency.
-    '''
+    """
 
     def __init__(self, wf, settingpath='beancount.json'):
         self.wf = wf
@@ -30,6 +30,11 @@ class Beancount:
         self.args = wf.args[1:] + ['']*(6-self.length)
         with open(settingpath, 'r') as settingfile:
             self.settings = json.loads(settingfile.read())
+
+        # read variables from env
+        self.settings['default_currency'] = os.environ['default_currency']
+        self.settings['ledger_folder'] = os.environ['ledger_folder']
+        self.settings['default_ledger'] = os.environ['default_ledger']
 
         for k, v in self.settings['icons'].items():
             wfdir = self.wf.workflowdir
@@ -53,13 +58,14 @@ class Beancount:
 
         if self.length <= 3:
             for v,_ in self.rank(self.args[self.length-1], accounts[params[-1]]):
+                value = v
                 if params[-1] in ['from', 'to']:
                     if v==self.args[self.length-1]:
                         continue
-                    value = v
                     icon = self.settings['icons'][v.split(':')[0]]
                 else:
-                    value = accounts['mapping'][v]
+                    if v in accounts['mapping']:
+                        value = accounts['mapping'][v]
                     icon = self.wf.workflowdir + '/icon.png'
                 values[params[-1]] = value
                 self.wf.add_item(
@@ -69,7 +75,8 @@ class Beancount:
                     valid=False
                 )
         else:
-            values['payee'] = accounts['mapping'][values['payee']]
+            if values['payee'] in accounts['mapping']:
+                values['payee'] = accounts['mapping'][values['payee']]
             values['date'] = datetime.now().strftime('%Y-%m-%d')
             values['amount'] = float(self.args[3])
             if self.args[4]:

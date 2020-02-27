@@ -1,9 +1,5 @@
 {
-    "default_currency": "USD",
-    "ledger_folder": "full/path/to/your/beancount/folder",
-    "default_ledger": "full/path/to/your/default/beancount/file",
     "temp_path": "beancount.temp",
-    "clear_tag": "clear",
     "title_format": "{date} * \"{payee}\" \"{comment}\" {tags}",
     "body_format": "  {account:50} {flow:>13.2f} {currency}",
     "regexes": {

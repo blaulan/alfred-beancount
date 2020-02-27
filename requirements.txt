@@ -1,0 +1,2 @@
+pypinyin==0.37.0
+Alfred-Workflow==1.37.2
