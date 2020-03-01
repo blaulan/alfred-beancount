@@ -105,12 +105,10 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>import json
+				<string>import os
+import json
 
-with open('beancount.json', 'r') as settingfile:
-    settings = json.loads(settingfile.read())
-
-with open(settings['default_ledger'], 'a') as beanfile:
+with open(os.environ['default_ledger'], 'a') as beanfile:
     beanfile.write('''{query}\n\n''')</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -146,7 +144,7 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
-				<true/>
+				<false/>
 				<key>queuedelaymode</key>
 				<integer>2</integer>
 				<key>queuemode</key>
@@ -181,7 +179,7 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
-				<true/>
+				<false/>
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
@@ -195,6 +193,29 @@ with open(settings['default_ledger'], 'a') as beanfile:
 			<string>312E69AC-14DB-490A-8EF8-2394B2461708</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>$python_path beancount.py cache {query}</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -225,40 +246,15 @@ with open(settings['default_ledger'], 'a') as beanfile:
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>$python_path beancount.py cache {query}</string>
-				<key>scriptargtype</key>
-				<integer>0</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>D68F7816-06F0-4888-B230-1CDFCD8A6832</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>import json
+				<string>import os
+import json
 
 pos = int({query})
 
-with open('beancount.json', 'r') as settingfile:
-    settings = json.loads(settingfile.read())
-
-with open(settings['default_ledger'], 'r') as beanfile:
+with open(os.environ['default_ledger'], 'r') as beanfile:
     bean = beanfile.read()
 
-with open(settings['default_ledger'], 'w') as beanfile:
+with open(os.environ['default_ledger'], 'w') as beanfile:
     beanfile.write(bean[:pos+12] + '*' + bean[pos+13:])</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -294,11 +290,11 @@ with open(settings['default_ledger'], 'w') as beanfile:
 				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
-				<true/>
+				<false/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>queuemode</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>Searching for Entries...</string>
 				<key>script</key>
@@ -387,14 +383,14 @@ with open(settings['default_ledger'], 'w') as beanfile:
 		<key>ledger_folder</key>
 		<string>.</string>
 		<key>python_path</key>
-		<string>/Users/yue/.virtualenvs/py27/bin/python2</string>
+		<string>/Users/yue/.virtualenvs/dev/bin/python</string>
 	</dict>
 	<key>variablesdontexport</key>
 	<array>
-		<string>python_path</string>
-		<string>ledger_folder</string>
-		<string>default_ledger</string>
 		<string>default_currency</string>
+		<string>python_path</string>
+		<string>default_ledger</string>
+		<string>ledger_folder</string>
 	</array>
 	<key>version</key>
 	<string>0.3.1</string>

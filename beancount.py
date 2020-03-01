@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-# @Author: Yue Wu
-# @Date:   2016-02-29 23:43:43
-# @Last Modified by:   Yue Wu
-# @Last Modified time: 2017-01-05 12:40:38
+# @Author: Yue Wu <me@blaulan.com>
+# @Date:   2020-02-28 16:48:17
+# @Last Modified By:   Yue Wu <me@blaulan.com>
+# @Last Modified Time: 2020-03-01 19:30:08
 
 import os
 import re
 import sys
+import glob
 import json
-from math import log
-from glob import glob
 from datetime import datetime
+from fuzzywuzzy import process
 from pypinyin import lazy_pinyin
 
 
@@ -24,97 +24,125 @@ class Beancount:
     bean_cache: create a cache file with all accounts and payees with frequency.
     """
 
-    def __init__(self, wf, settingpath='beancount.json'):
-        self.wf = wf
-        self.length = len(wf.args)-1
-        self.args = wf.args[1:] + ['']*(6-self.length)
-        with open(settingpath, 'r') as settingfile:
-            self.settings = json.loads(settingfile.read())
+    def __init__(self, config_path='beancount.json'):
+        # read settings from config file
+        with open(config_path, 'r') as setting_file:
+            self.settings = json.load(setting_file)
 
-        # read variables from env
-        self.settings['default_currency'] = os.environ['default_currency']
-        self.settings['ledger_folder'] = os.environ['ledger_folder']
-        self.settings['default_ledger'] = os.environ['default_ledger']
+        # read variables from environment
+        for v in ['default_currency', 'ledger_folder', 'default_ledger']:
+            if v in os.environ:
+                self.settings[v] = os.environ[v]
 
-        for k, v in self.settings['icons'].items():
-            wfdir = self.wf.workflowdir
-            if not os.path.isfile(v.format(workflowdir=wfdir)):
-                self.settings['icons'][k] = '{workflowdir}/icons/{cat}.png'
-            self.settings['icons'][k] = v.format(workflowdir=wfdir, cat=k)
+        # check path for icons
+        for k,v in self.settings['icons'].items():
+            if not os.path.isfile(v):
+                self.settings['icons'][k] = './icons/{}.png'.format(k)
 
-    def bean_add(self):
+    def bean_add(self, inputs):
         try:
             with open(self.settings['temp_path'], 'r') as tempfile:
                 accounts = json.loads(tempfile.read())
         except IOError:
             accounts = self.bean_cache()
 
-        subtitle = u'{from} ➟ {to} by {payee}'
-        params = ['from', 'to', 'payee'][:self.length]
-        values = {x: '\t' for x in ['from', 'to', 'payee']}
-
-        for index, p in enumerate(params[:self.length-1]):
-            values[p] = self.rank(self.args[index], accounts[p])[0][0]
-
-        if self.length <= 3:
-            for v,_ in self.rank(self.args[self.length-1], accounts[params[-1]]):
-                value = v
-                if params[-1] in ['from', 'to']:
-                    if v==self.args[self.length-1]:
-                        continue
-                    icon = self.settings['icons'][v.split(':')[0]]
+        params = ['from', 'to', 'payee', 'amount', 'tags', 'comment']
+        values = {p: '' for p in params}
+        for p,v in zip(params, inputs):
+            # handle matches for accounts
+            if p in params[:3]:
+                matches = self.rank(v, accounts[p])
+                # return the full list if last param
+                if p==params[len(inputs)-1]:
+                    entries = []
+                    for m in matches:
+                        account = m
+                        icon = './icon.png'
+                        if p!='payee':
+                            account_type = m.split(':')[0]
+                            if account_type in self.settings['icons']:
+                                icon = self.settings['icons'][account_type]
+                        else:
+                            if m in accounts['mapping']:
+                                account = accounts['mapping'][m]
+                        values[p] = account
+                        entries.append({
+                            'title': account,
+                            'subtitle': self.format_desc(values),
+                            'autocomplete': account,
+                            'valid': False,
+                            'icon': icon
+                        })
+                    return entries
                 else:
-                    if v in accounts['mapping']:
-                        value = accounts['mapping'][v]
-                    icon = self.wf.workflowdir + '/icon.png'
-                values[params[-1]] = value
-                self.wf.add_item(
-                    title=value,
-                    subtitle=subtitle.format(**values),
-                    icon=icon,
-                    valid=False
-                )
-        else:
-            if values['payee'] in accounts['mapping']:
-                values['payee'] = accounts['mapping'][values['payee']]
-            values['date'] = datetime.now().strftime('%Y-%m-%d')
-            values['amount'] = float(self.args[3])
-            if self.args[4]:
-                self.args[4] = '#'+self.args[4].replace('+', ' #')
-            values['tags'] = self.args[4]
-            values['comment'] = self.args[5]
-            entry = [self.settings['title_format'].format(**values).strip()]
-            entry.append(self.settings['body_format'].format(
+                    values[p] = matches[0]
+            # handle transaction amount
+            elif p=='amount':
+                values[p] = float(v)
+            # handle tags
+            elif p=='tags':
+                values[p] = '#'+' #'.join(v.split('+'))
+            # handle comment
+            else:
+                values[p] = v
+
+        values['date'] = datetime.now().strftime('%Y-%m-%d')
+        entry = '\n'.join([
+            self.settings['title_format'].format(**values).strip(),
+            self.settings['body_format'].format(
                 account=values['from'], flow=-values['amount'],
                 currency=self.settings['default_currency']
-            ))
-            entry.append(self.settings['body_format'].format(
+            ),
+            self.settings['body_format'].format(
                 account=values['to'], flow=values['amount'],
                 currency=self.settings['default_currency']
-            ))
-            entry = '\n'.join(entry)
-            self.wf.add_item(
-                title='New ${amount:.2f} Entry {tags}'.format(**values),
-                subtitle=subtitle.format(**values),
-                valid=True,
-                arg=entry,
-                copytext=entry
             )
+        ])
+        return [{
+            'title': 'New ${amount:.2f} Entry {tags}'.format(**values),
+            'subtitle': self.format_desc(values),
+            'valid': True,
+            'arg': entry,
+            'text': entry
+        }]
+
+    def bean_clear(self, inputs=None):
+        with open(self.settings['default_ledger'], 'r') as beanfile:
+            bean = beanfile.read()
+
+        for m in re.finditer(self.settings['regexes']['clear'], bean):
+            tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
+            values = {
+                'date': m.group(1),
+                'from': m.group(3).split()[0],
+                'to': m.group(4).split()[0],
+                'amount': abs(float(m.group(3).split()[-2])),
+                'comment': tail[0].upper() if tail else 'NULL'
+            }
+            yield {
+                'title': '${amount:.2f} with {comment}'.format(**values),
+                'subtitle': u'{date} {from} ➟ {to}'.format(**values),
+                'valid': True,
+                'icon': self.settings['icons'][values['from'].split(':')[0]],
+                'arg': str(m.start())
+            }
 
     def bean_cache(self, ledger_folder=None):
+        # default to folder in config file
         if not ledger_folder:
             ledger_folder = self.settings['ledger_folder']
 
-        beans = []
-        for f in glob(ledger_folder+'/*.beancount'):
+        # read and join all records
+        records = []
+        for f in glob.glob(os.path.join(ledger_folder, '*.beancount')):
             with open(f, 'r') as beanfile:
-                beans.append(beanfile.read())
-        bean = '\n'.join(beans)
+                records.append(beanfile.read())
+        content = '\n'.join(records)
 
+        # find matches based on regexes
         matches = {}
-        for key, reg in self.settings['regexes'].items():
-            pattern = re.compile(reg)
-            matches[key] = pattern.findall(bean)
+        for key in ['open', 'close', 'payee', 'from', 'to']:
+            matches[key] = re.findall(self.settings['regexes'][key], content)
 
         accounts = {
             'from': {
@@ -139,85 +167,45 @@ class Beancount:
 
         with open(self.settings['temp_path'], 'w') as tempfile:
             json.dump(accounts, tempfile)
-
         return accounts
 
-    def bean_clear(self, inputs=None):
-        with open(self.settings['default_ledger'], 'r') as beanfile:
-            bean = beanfile.read()
-
-        par = re.compile(r'[^;](\d{4}-\d{2}-\d{2}) ! ?(.*)\n(.+)\n(.+)')
-        for m in par.finditer(bean):
-            tail = [i.strip() for i in m.group(2).split('"') if i.strip()!='']
-            values = {
-                'date': m.group(1),
-                'from': m.group(3).split()[0],
-                'to': m.group(4).split()[0],
-                'amount': abs(float(m.group(3).split()[-2])),
-                'comment': (tail+['NULL'])[0].upper()
-            }
-
-            if inputs and not self.wf.filter(inputs, [values['from']]):
-                continue
-
-            self.wf.add_item(
-                title='${amount:.2f} with {comment}'.format(**values),
-                subtitle=u'{date} {from} ➟ {to}'.format(**values),
-                icon=self.settings['icons'][values['from'].split(':')[0]],
-                valid=True,
-                arg=str(m.start())
-            )
-
-    def rank(self, inputs, searches):
-        if not inputs:
-            return [(inputs, 0)]
-
-        results = self.wf.filter(inputs, searches.keys(), include_score=True)
-        results = [(v, s*log(searches[v]+1)) for v, s, _ in results]
-        if results:
-            return sorted(results, key=lambda x: -x[1])
-        else:
-            return [(inputs, 0)]
+    def rank(self, target, searches, limit=10):
+        matches = [m[0] for m in process.extract(
+            target, searches.keys(), limit=limit) if m[1]>0]
+        if matches:
+            return matches
+        return [target]
 
     def decode(self, text):
         return ''.join(lazy_pinyin(text.decode('utf-8')))
 
+    def format_desc(self, value):
+        desc = []
+        if value['from']:
+            desc += [value['from']]
+        if value['to']:
+            desc += ['➟', value['to']]
+        if value['payee']:
+            desc += ['by', value['payee']]
+        if value['amount']:
+            desc += ['¥{:.2f}'.format(value['amount'])]
+        return ' '.join(desc)
 
-def main(wf):
-    bean = Beancount(wf)
+    def format_alfred(self, results):
+        print(json.dumps({'items': list(results)}))
 
-    action = wf.args[0]
-    if len(wf.args) >= 2:
-        inputs = wf.args[1]
-    else:
-        inputs = None
 
+if __name__=='__main__':
+    # exit if no argument provided
+    if len(sys.argv)==1:
+        sys.exit()
+
+    bean = Beancount()
+    action = sys.argv[1]
+    inputs = sys.argv[2:]
     if action == 'add':
-        bean.bean_add()
+        bean.format_alfred(bean.bean_add(inputs))
     elif action == 'cache':
         bean.bean_cache(inputs)
     elif action == 'clear':
-        bean.bean_clear(inputs)
-
-    wf.send_feedback()
-
-
-if __name__ == '__main__':
-    from workflow import Workflow, ICON_INFO
-    wf = Workflow(
-        update_settings = {
-            'github_slug': 'blaulan/alfred-beancount',
-            'version': 'v0.3',
-        }
-    )
-    wf.magic_prefix = 'wf:'
-
-    if wf.update_available:
-        wf.add_item(
-            'New version available',
-            'Action this item to install the update',
-            autocomplete='wf:update',
-            icon=ICON_INFO
-        )
-
-    sys.exit(wf.run(main))
+        bean.format_alfred(bean.bean_clear(inputs))
