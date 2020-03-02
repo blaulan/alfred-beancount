@@ -393,7 +393,7 @@ with open(os.environ['default_ledger'], 'w') as beanfile:
 		<string>ledger_folder</string>
 	</array>
 	<key>version</key>
-	<string>0.3.1</string>
+	<string>0.4</string>
 	<key>webaddress</key>
 	<string>http://blog.blaulan.com</string>
 </dict>
