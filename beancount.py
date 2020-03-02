@@ -2,16 +2,17 @@
 # @Author: Yue Wu <me@blaulan.com>
 # @Date:   2020-02-28 16:48:17
 # @Last Modified By:   Yue Wu <me@blaulan.com>
-# @Last Modified Time: 2020-03-02 22:13:18
+# @Last Modified Time: 2020-03-02 22:47:36
 
 import os
 import re
 import sys
+import math
 import glob
 import json
 from datetime import datetime
-from fuzzywuzzy import process
 from pypinyin import lazy_pinyin
+from fuzzywuzzy import fuzz, process
 
 
 class Beancount:
@@ -39,19 +40,23 @@ class Beancount:
             if not os.path.isfile(v):
                 self.settings['icons'][k] = './icons/{}.png'.format(k)
 
+        # setup variables
+        self.accounts = []
+
     def bean_add(self, inputs):
-        try:
-            with open(self.settings['temp_path'], 'r') as tempfile:
-                accounts = json.loads(tempfile.read())
-        except IOError:
-            accounts = self.bean_cache()
+        if not self.accounts:
+            try:
+                with open(self.settings['temp_path'], 'r') as tempfile:
+                    self.accounts = json.loads(tempfile.read())
+            except IOError:
+                self.accounts = self.bean_cache()
 
         params = ['from', 'to', 'payee', 'amount', 'tags', 'comment']
         values = {p: '' for p in params}
         for p,v in zip(params, inputs):
             # handle matches for accounts
             if p in params[:3]:
-                matches = self.rank(v, accounts[p])
+                matches = self.rank(v, self.accounts[p])
                 # return the full list if last param
                 if p==params[len(inputs)-1]:
                     entries = []
@@ -63,8 +68,8 @@ class Beancount:
                             if account_type in self.settings['icons']:
                                 icon = self.settings['icons'][account_type]
                         else:
-                            if m in accounts['mapping']:
-                                account = accounts['mapping'][m]
+                            if m in self.accounts['mapping']:
+                                account = self.accounts['mapping'][m]
                         values[p] = account
                         entries.append({
                             'title': account,
@@ -76,8 +81,8 @@ class Beancount:
                     return entries
                 else:
                     account = matches[0]
-                    if p=='payee' and account in accounts['mapping']:
-                        account = accounts['mapping'][m]
+                    if p=='payee' and account in self.accounts['mapping']:
+                        account = self.accounts['mapping'][account]
                     values[p] = account
             # handle transaction amount
             elif p=='amount':
@@ -173,10 +178,11 @@ class Beancount:
         return accounts
 
     def rank(self, target, searches, limit=10):
-        matches = [m[0] for m in process.extract(
-            target, searches.keys(), limit=limit) if m[1]>0]
+        matches = process.extract(
+            target, searches.keys(), limit=limit, scorer=fuzz.partial_ratio)
+        matches = [(m[0], m[1]*math.log(searches[m[0]]+1)) for m in matches if m[1]>0]
         if matches:
-            return matches
+            return [m[0] for m in sorted(matches, key=lambda d: -d[1])]
         return [target]
 
     def decode(self, text):
