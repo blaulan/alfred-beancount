@@ -2,7 +2,7 @@
 # @Author: Yue Wu <me@blaulan.com>
 # @Date:   2020-02-28 16:48:17
 # @Last Modified By:   Yue Wu <me@blaulan.com>
-# @Last Modified Time: 2020-03-01 19:30:08
+# @Last Modified Time: 2020-03-02 22:13:18
 
 import os
 import re
@@ -75,7 +75,10 @@ class Beancount:
                         })
                     return entries
                 else:
-                    values[p] = matches[0]
+                    account = matches[0]
+                    if p=='payee' and account in accounts['mapping']:
+                        account = accounts['mapping'][m]
+                    values[p] = account
             # handle transaction amount
             elif p=='amount':
                 values[p] = float(v)
@@ -177,7 +180,7 @@ class Beancount:
         return [target]
 
     def decode(self, text):
-        return ''.join(lazy_pinyin(text.decode('utf-8')))
+        return ''.join(lazy_pinyin(text))
 
     def format_desc(self, value):
         desc = []
