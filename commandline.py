@@ -2,7 +2,7 @@
 # @Author: Yue Wu <me@blaulan.com>
 # @Date:   2020-02-29 17:49:05
 # @Last Modified By:   Yue Wu <me@blaulan.com>
-# @Last Modified Time: 2020-03-01 19:30:19
+# @Last Modified Time: 2020-03-02 22:06:26
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -33,7 +33,9 @@ class BeancountValidator(Validator):
 
     def validate(self, document):
         inputs = document.text.strip().split()
-        if len(inputs)>3 and not inputs[3].isdigit():
+        if not inputs:
+            return
+        if len(inputs)>3 and not inputs[3].replace('.','',1).isdigit():
             raise ValidationError(
                 message='amount value error',
                 cursor_position=len(document.text)-1
