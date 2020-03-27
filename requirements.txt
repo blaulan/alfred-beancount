@@ -1,4 +1,3 @@
-fuzzywuzzy==0.18.0
+rapidfuzz==0.3.0
 prompt_toolkit==2.0.10
 pypinyin==0.37.0
-python-Levenshtein==0.12.0

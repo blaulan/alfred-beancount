@@ -12,7 +12,7 @@ import glob
 import json
 from datetime import datetime
 from pypinyin import lazy_pinyin
-from fuzzywuzzy import fuzz, process
+from rapidfuzz import fuzz, process
 
 
 class Beancount:
