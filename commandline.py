@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-# @Author: Yue Wu <me@blaulan.com>
-# @Date:   2020-02-29 17:49:05
-# @Last Modified By:   Yue Wu <me@blaulan.com>
-# @Last Modified Time: 2020-03-02 22:06:26
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion

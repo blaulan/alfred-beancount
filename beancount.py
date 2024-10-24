@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-# @Author: Yue Wu <me@blaulan.com>
-# @Date:   2020-02-28 16:48:17
-# @Last Modified By:   Yue Wu <me@blaulan.com>
-# @Last Modified Time: 2020-03-02 22:47:36
 
 import os
 import re
