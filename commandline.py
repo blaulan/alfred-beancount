@@ -56,6 +56,7 @@ class BeancountToolbar:
 
 if __name__=='__main__':
     bean = Beancount()
+    # bean.bean_cache()
     toolbar = BeancountToolbar()
     completer = BeancountCompleter()
     completer.set_bean(bean)
@@ -78,10 +79,18 @@ if __name__=='__main__':
             continue
         except EOFError:
             break
-        output = bean.bean_add(text.strip().split())[0]
-        with open(bean.settings['default_ledger'], 'a') as ledger_file:
-            ledger_file.write(output['arg']+'\n\n')
-        print(output['arg'])
-        toolbar.clear_text()
+        if text.strip() in ('q', 'quit', 'exit'):
+            break
+        try:
+            output = bean.bean_add(text.strip().split())[0]
+            with open(bean.settings['default_ledger'], 'a') as ledger_file:
+                ledger_file.write('\n'+output['arg']+'\n')
+            print('\n'.join([
+                i.replace(' '*10, '', 1)
+                for i in output['arg'].split('\n')
+            ]))
+            toolbar.clear_text()
+        except Exception as e:
+            pass
 
     print('session ended!')
