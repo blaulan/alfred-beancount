@@ -2,7 +2,7 @@
     "default_currency": "CNY",
     "ledger_folder": ".",
     "default_ledger": "./example.beancount",
-    "temp_path": "beancount.temp",
+    "cache_path": "beancount.temp",
     "title_format": "{date} * \"{payee}\" \"{comment}\" {tags}",
     "body_format": "  {account:50} {flow:>13.2f} {currency}",
     "regexes": {

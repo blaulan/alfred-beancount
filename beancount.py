@@ -46,17 +46,22 @@ class Beancount:
     def bean_add(self, inputs):
         if not self.accounts:
             try:
-                with open(self.settings['temp_path'], 'r') as tempfile:
+                with open(self.settings['cache_path'], 'r') as tempfile:
                     self.accounts = json.loads(tempfile.read())
             except IOError:
                 self.accounts = self.bean_cache()
 
         params = ['from', 'to', 'payee', 'amount', 'tags', 'comment']
-        values = {p: '' for p in params}
+        values = {p: 0 if p=='amount' else '' for p in params}
         for p,v in zip(params, inputs):
             # handle matches for accounts
             if p in params[:3]:
-                matches = self.rank(v, self.accounts[p])
+                # param start with exclamation mark will be returned exactly
+                # otherwise it will be matched against existing accounts
+                if v[0]=='!':
+                    matches = [v[1:].replace('_', ' ')]
+                else:
+                    matches = self.rank(v.replace('_', ' '), self.accounts[p])
                 # return the full list if last param
                 if p==params[len(inputs)-1]:
                     entries = []
@@ -142,7 +147,12 @@ class Beancount:
 
         # read and join all records
         records = []
-        for f in glob.glob(os.path.join(ledger_folder, '*.beancount')):
+        cache_files = []
+        if 'cache_files' in self.settings:
+            cache_files = [os.path.join(ledger_folder, f) for f in self.settings['cache_files']]
+        else:
+            cache_files = glob.glob(os.path.join(ledger_folder, '*.beancount'))
+        for f in cache_files:
             with open(f, 'r') as beanfile:
                 records.append(beanfile.read())
         content = '\n'.join(records)
@@ -163,24 +173,27 @@ class Beancount:
                 for x in matches['open']
                 if x not in matches['close']
             },
-            'payee': {
+            'payee': {k:v for k,v in {
                 self.decode(x): matches['payee'].count(x)
                 for x in set(matches['payee'])
-            },
+            }.items() if v>1},
             'mapping': {
                 self.decode(x): x
                 for x in set(matches['payee'])
             }
         }
 
-        with open(self.settings['temp_path'], 'w') as tempfile:
+        with open(self.settings['cache_path'], 'w') as tempfile:
             json.dump(accounts, tempfile)
         return accounts
 
     def rank(self, target, searches, limit=10):
+        target = target.replace('\'', '').replace('"', '')
+        if not target:
+            return ['']
         matches = process.extract(
             target, searches.keys(), limit=limit, scorer=fuzz.partial_ratio)
-        matches = [(m[0], m[1]*math.log(searches[m[0]]+1)) for m in matches if m[1]>0]
+        matches = [(m[0], m[1]*math.log(searches[m[0]]+1)) for m in matches if m[1]>60]
         if matches:
             return [m[0] for m in sorted(matches, key=lambda d: -d[1])]
         return [target]
