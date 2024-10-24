@@ -1,3 +1,5 @@
+prompt_toolkit==3.0.48
+pypinyin==0.53.0
+python-fasthtml==0.8.0
+python-Levenshtein==0.26.0
 rapidfuzz==0.3.0
-prompt_toolkit==2.0.10
-pypinyin==0.37.0
